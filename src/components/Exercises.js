@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pagination } from '@mui/material';
 import { Box, Stack, Typography } from '@mui/material';
 
-import { exerciseOptions, fetchData } from '../utils/fetchData';
+import { BASE_URL, exerciseOptions, fetchData } from '../utils/fetchData';
 import ExerciseCard from './ExerciseCard';
 
 
@@ -15,6 +15,25 @@ const Exercises = ({ bodyPart, exercises, setExercises }) => {
 
     window.scrollTo({ top: 1800, behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    const fetchExercisesData = async () => {
+      let exercisesData = [];
+
+      if (bodyPart === 'all') {
+        exercisesData = await fetchData(`${BASE_URL}/exercises`, exerciseOptions);
+      } else {
+        exercisesData = await fetchData(`${BASE_URL}/exercises/bodyPart/${bodyPart}`, exerciseOptions);
+      }
+
+      setExercises(exercisesData);
+
+    }
+
+    fetchExercisesData();
+  }, [bodyPart, setExercises]);
+
+
   const indexOfLastExercise = currentPage * exercisesPerPage;
 
   const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
@@ -24,7 +43,7 @@ const Exercises = ({ bodyPart, exercises, setExercises }) => {
 
   return (
     <Box
-      id='#exercises'
+      id='exercises'
       sx={{ mt: { lg: '110px' } }}
       mt='50px'
       p='20px'
